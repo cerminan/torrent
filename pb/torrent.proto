@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+option go_package = "github.com/cerminan/torrent/pb";
+
+service TorrentService {
+  rpc Fetch(FetchReq) returns (FetchRes) {}
+  rpc Files(FilesReq) returns (FilesRes) {}
+  rpc ReadAt(ReadAtReq) returns (ReadAtRes) {}
+}
+
+message FetchReq {
+  string url = 1;
+}
+
+message FetchRes {
+  bytes data = 1;
+}
+
+message FilesReq {
+  bytes data = 1;
+}
+
+message FilesRes {
+  repeated file files = 1;
+}
+
+message file {
+  string name = 1;
+  int64 length = 2;
+}
+
+message ReadAtReq {
+  bytes data = 1;
+  int32 index = 2;
+  int64 off = 3;
+  int64 ln = 4;
+}
+
+message ReadAtRes {
+  bytes buffer = 1;
+}
