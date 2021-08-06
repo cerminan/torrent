@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.27.1
 // 	protoc        v3.6.1
-// source: pb/torrent.proto
+// source: torrent.proto
 
 package pb
 
@@ -20,112 +20,18 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type FetchReq struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Url string `protobuf:"bytes,1,opt,name=url,proto3" json:"url,omitempty"`
-}
-
-func (x *FetchReq) Reset() {
-	*x = FetchReq{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_pb_torrent_proto_msgTypes[0]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *FetchReq) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*FetchReq) ProtoMessage() {}
-
-func (x *FetchReq) ProtoReflect() protoreflect.Message {
-	mi := &file_pb_torrent_proto_msgTypes[0]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use FetchReq.ProtoReflect.Descriptor instead.
-func (*FetchReq) Descriptor() ([]byte, []int) {
-	return file_pb_torrent_proto_rawDescGZIP(), []int{0}
-}
-
-func (x *FetchReq) GetUrl() string {
-	if x != nil {
-		return x.Url
-	}
-	return ""
-}
-
-type FetchRes struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Data []byte `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
-}
-
-func (x *FetchRes) Reset() {
-	*x = FetchRes{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_pb_torrent_proto_msgTypes[1]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *FetchRes) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*FetchRes) ProtoMessage() {}
-
-func (x *FetchRes) ProtoReflect() protoreflect.Message {
-	mi := &file_pb_torrent_proto_msgTypes[1]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use FetchRes.ProtoReflect.Descriptor instead.
-func (*FetchRes) Descriptor() ([]byte, []int) {
-	return file_pb_torrent_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *FetchRes) GetData() []byte {
-	if x != nil {
-		return x.Data
-	}
-	return nil
-}
-
 type FilesReq struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Data []byte `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	Magnet string `protobuf:"bytes,1,opt,name=magnet,proto3" json:"magnet,omitempty"`
 }
 
 func (x *FilesReq) Reset() {
 	*x = FilesReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pb_torrent_proto_msgTypes[2]
+		mi := &file_torrent_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -138,7 +44,7 @@ func (x *FilesReq) String() string {
 func (*FilesReq) ProtoMessage() {}
 
 func (x *FilesReq) ProtoReflect() protoreflect.Message {
-	mi := &file_pb_torrent_proto_msgTypes[2]
+	mi := &file_torrent_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -151,14 +57,14 @@ func (x *FilesReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FilesReq.ProtoReflect.Descriptor instead.
 func (*FilesReq) Descriptor() ([]byte, []int) {
-	return file_pb_torrent_proto_rawDescGZIP(), []int{2}
+	return file_torrent_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *FilesReq) GetData() []byte {
+func (x *FilesReq) GetMagnet() string {
 	if x != nil {
-		return x.Data
+		return x.Magnet
 	}
-	return nil
+	return ""
 }
 
 type FilesRes struct {
@@ -172,7 +78,7 @@ type FilesRes struct {
 func (x *FilesRes) Reset() {
 	*x = FilesRes{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pb_torrent_proto_msgTypes[3]
+		mi := &file_torrent_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -185,7 +91,7 @@ func (x *FilesRes) String() string {
 func (*FilesRes) ProtoMessage() {}
 
 func (x *FilesRes) ProtoReflect() protoreflect.Message {
-	mi := &file_pb_torrent_proto_msgTypes[3]
+	mi := &file_torrent_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -198,7 +104,7 @@ func (x *FilesRes) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FilesRes.ProtoReflect.Descriptor instead.
 func (*FilesRes) Descriptor() ([]byte, []int) {
-	return file_pb_torrent_proto_rawDescGZIP(), []int{3}
+	return file_torrent_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *FilesRes) GetFiles() []*File {
@@ -213,14 +119,15 @@ type File struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Name   string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Length int64  `protobuf:"varint,2,opt,name=length,proto3" json:"length,omitempty"`
+	TorrentHash string `protobuf:"bytes,1,opt,name=torrentHash,proto3" json:"torrentHash,omitempty"`
+	Name        string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Length      int64  `protobuf:"varint,3,opt,name=length,proto3" json:"length,omitempty"`
 }
 
 func (x *File) Reset() {
 	*x = File{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pb_torrent_proto_msgTypes[4]
+		mi := &file_torrent_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -233,7 +140,7 @@ func (x *File) String() string {
 func (*File) ProtoMessage() {}
 
 func (x *File) ProtoReflect() protoreflect.Message {
-	mi := &file_pb_torrent_proto_msgTypes[4]
+	mi := &file_torrent_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -246,7 +153,14 @@ func (x *File) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use File.ProtoReflect.Descriptor instead.
 func (*File) Descriptor() ([]byte, []int) {
-	return file_pb_torrent_proto_rawDescGZIP(), []int{4}
+	return file_torrent_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *File) GetTorrentHash() string {
+	if x != nil {
+		return x.TorrentHash
+	}
+	return ""
 }
 
 func (x *File) GetName() string {
@@ -268,16 +182,16 @@ type ReadAtReq struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Data  []byte `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
-	Index int32  `protobuf:"varint,2,opt,name=index,proto3" json:"index,omitempty"`
-	Off   int64  `protobuf:"varint,3,opt,name=off,proto3" json:"off,omitempty"`
-	Ln    int64  `protobuf:"varint,4,opt,name=ln,proto3" json:"ln,omitempty"`
+	File  *File `protobuf:"bytes,1,opt,name=file,proto3" json:"file,omitempty"`
+	Index int32 `protobuf:"varint,2,opt,name=index,proto3" json:"index,omitempty"`
+	Off   int64 `protobuf:"varint,3,opt,name=off,proto3" json:"off,omitempty"`
+	Ln    int64 `protobuf:"varint,4,opt,name=ln,proto3" json:"ln,omitempty"`
 }
 
 func (x *ReadAtReq) Reset() {
 	*x = ReadAtReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pb_torrent_proto_msgTypes[5]
+		mi := &file_torrent_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -290,7 +204,7 @@ func (x *ReadAtReq) String() string {
 func (*ReadAtReq) ProtoMessage() {}
 
 func (x *ReadAtReq) ProtoReflect() protoreflect.Message {
-	mi := &file_pb_torrent_proto_msgTypes[5]
+	mi := &file_torrent_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -303,12 +217,12 @@ func (x *ReadAtReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReadAtReq.ProtoReflect.Descriptor instead.
 func (*ReadAtReq) Descriptor() ([]byte, []int) {
-	return file_pb_torrent_proto_rawDescGZIP(), []int{5}
+	return file_torrent_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *ReadAtReq) GetData() []byte {
+func (x *ReadAtReq) GetFile() *File {
 	if x != nil {
-		return x.Data
+		return x.File
 	}
 	return nil
 }
@@ -345,7 +259,7 @@ type ReadAtRes struct {
 func (x *ReadAtRes) Reset() {
 	*x = ReadAtRes{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pb_torrent_proto_msgTypes[6]
+		mi := &file_torrent_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -358,7 +272,7 @@ func (x *ReadAtRes) String() string {
 func (*ReadAtRes) ProtoMessage() {}
 
 func (x *ReadAtRes) ProtoReflect() protoreflect.Message {
-	mi := &file_pb_torrent_proto_msgTypes[6]
+	mi := &file_torrent_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -371,7 +285,7 @@ func (x *ReadAtRes) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReadAtRes.ProtoReflect.Descriptor instead.
 func (*ReadAtRes) Descriptor() ([]byte, []int) {
-	return file_pb_torrent_proto_rawDescGZIP(), []int{6}
+	return file_torrent_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *ReadAtRes) GetBuffer() []byte {
@@ -381,110 +295,80 @@ func (x *ReadAtRes) GetBuffer() []byte {
 	return nil
 }
 
-var File_pb_torrent_proto protoreflect.FileDescriptor
+var File_torrent_proto protoreflect.FileDescriptor
 
-var file_pb_torrent_proto_rawDesc = []byte{
-	0x0a, 0x10, 0x70, 0x62, 0x2f, 0x74, 0x6f, 0x72, 0x72, 0x65, 0x6e, 0x74, 0x2e, 0x70, 0x72, 0x6f,
-	0x74, 0x6f, 0x22, 0x1c, 0x0a, 0x08, 0x46, 0x65, 0x74, 0x63, 0x68, 0x52, 0x65, 0x71, 0x12, 0x10,
-	0x0a, 0x03, 0x75, 0x72, 0x6c, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x75, 0x72, 0x6c,
-	0x22, 0x1e, 0x0a, 0x08, 0x46, 0x65, 0x74, 0x63, 0x68, 0x52, 0x65, 0x73, 0x12, 0x12, 0x0a, 0x04,
-	0x64, 0x61, 0x74, 0x61, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x04, 0x64, 0x61, 0x74, 0x61,
-	0x22, 0x1e, 0x0a, 0x08, 0x46, 0x69, 0x6c, 0x65, 0x73, 0x52, 0x65, 0x71, 0x12, 0x12, 0x0a, 0x04,
-	0x64, 0x61, 0x74, 0x61, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x04, 0x64, 0x61, 0x74, 0x61,
-	0x22, 0x27, 0x0a, 0x08, 0x46, 0x69, 0x6c, 0x65, 0x73, 0x52, 0x65, 0x73, 0x12, 0x1b, 0x0a, 0x05,
-	0x66, 0x69, 0x6c, 0x65, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x05, 0x2e, 0x66, 0x69,
-	0x6c, 0x65, 0x52, 0x05, 0x66, 0x69, 0x6c, 0x65, 0x73, 0x22, 0x32, 0x0a, 0x04, 0x66, 0x69, 0x6c,
-	0x65, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
-	0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x16, 0x0a, 0x06, 0x6c, 0x65, 0x6e, 0x67, 0x74, 0x68, 0x18,
-	0x02, 0x20, 0x01, 0x28, 0x03, 0x52, 0x06, 0x6c, 0x65, 0x6e, 0x67, 0x74, 0x68, 0x22, 0x57, 0x0a,
-	0x09, 0x52, 0x65, 0x61, 0x64, 0x41, 0x74, 0x52, 0x65, 0x71, 0x12, 0x12, 0x0a, 0x04, 0x64, 0x61,
-	0x74, 0x61, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x04, 0x64, 0x61, 0x74, 0x61, 0x12, 0x14,
-	0x0a, 0x05, 0x69, 0x6e, 0x64, 0x65, 0x78, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x05, 0x69,
-	0x6e, 0x64, 0x65, 0x78, 0x12, 0x10, 0x0a, 0x03, 0x6f, 0x66, 0x66, 0x18, 0x03, 0x20, 0x01, 0x28,
-	0x03, 0x52, 0x03, 0x6f, 0x66, 0x66, 0x12, 0x0e, 0x0a, 0x02, 0x6c, 0x6e, 0x18, 0x04, 0x20, 0x01,
-	0x28, 0x03, 0x52, 0x02, 0x6c, 0x6e, 0x22, 0x23, 0x0a, 0x09, 0x52, 0x65, 0x61, 0x64, 0x41, 0x74,
-	0x52, 0x65, 0x73, 0x12, 0x16, 0x0a, 0x06, 0x62, 0x75, 0x66, 0x66, 0x65, 0x72, 0x18, 0x01, 0x20,
-	0x01, 0x28, 0x0c, 0x52, 0x06, 0x62, 0x75, 0x66, 0x66, 0x65, 0x72, 0x32, 0x76, 0x0a, 0x0e, 0x54,
-	0x6f, 0x72, 0x72, 0x65, 0x6e, 0x74, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x1f, 0x0a,
-	0x05, 0x46, 0x65, 0x74, 0x63, 0x68, 0x12, 0x09, 0x2e, 0x46, 0x65, 0x74, 0x63, 0x68, 0x52, 0x65,
-	0x71, 0x1a, 0x09, 0x2e, 0x46, 0x65, 0x74, 0x63, 0x68, 0x52, 0x65, 0x73, 0x22, 0x00, 0x12, 0x1f,
-	0x0a, 0x05, 0x46, 0x69, 0x6c, 0x65, 0x73, 0x12, 0x09, 0x2e, 0x46, 0x69, 0x6c, 0x65, 0x73, 0x52,
-	0x65, 0x71, 0x1a, 0x09, 0x2e, 0x46, 0x69, 0x6c, 0x65, 0x73, 0x52, 0x65, 0x73, 0x22, 0x00, 0x12,
-	0x22, 0x0a, 0x06, 0x52, 0x65, 0x61, 0x64, 0x41, 0x74, 0x12, 0x0a, 0x2e, 0x52, 0x65, 0x61, 0x64,
-	0x41, 0x74, 0x52, 0x65, 0x71, 0x1a, 0x0a, 0x2e, 0x52, 0x65, 0x61, 0x64, 0x41, 0x74, 0x52, 0x65,
-	0x73, 0x22, 0x00, 0x42, 0x20, 0x5a, 0x1e, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f,
-	0x6d, 0x2f, 0x63, 0x65, 0x72, 0x6d, 0x69, 0x6e, 0x61, 0x6e, 0x2f, 0x74, 0x6f, 0x72, 0x72, 0x65,
-	0x6e, 0x74, 0x2f, 0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+var file_torrent_proto_rawDesc = []byte{
+	0x0a, 0x0d, 0x74, 0x6f, 0x72, 0x72, 0x65, 0x6e, 0x74, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22,
+	0x22, 0x0a, 0x08, 0x46, 0x69, 0x6c, 0x65, 0x73, 0x52, 0x65, 0x71, 0x12, 0x16, 0x0a, 0x06, 0x6d,
+	0x61, 0x67, 0x6e, 0x65, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x6d, 0x61, 0x67,
+	0x6e, 0x65, 0x74, 0x22, 0x27, 0x0a, 0x08, 0x46, 0x69, 0x6c, 0x65, 0x73, 0x52, 0x65, 0x73, 0x12,
+	0x1b, 0x0a, 0x05, 0x66, 0x69, 0x6c, 0x65, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x05,
+	0x2e, 0x66, 0x69, 0x6c, 0x65, 0x52, 0x05, 0x66, 0x69, 0x6c, 0x65, 0x73, 0x22, 0x54, 0x0a, 0x04,
+	0x66, 0x69, 0x6c, 0x65, 0x12, 0x20, 0x0a, 0x0b, 0x74, 0x6f, 0x72, 0x72, 0x65, 0x6e, 0x74, 0x48,
+	0x61, 0x73, 0x68, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x74, 0x6f, 0x72, 0x72, 0x65,
+	0x6e, 0x74, 0x48, 0x61, 0x73, 0x68, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x02,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x16, 0x0a, 0x06, 0x6c, 0x65,
+	0x6e, 0x67, 0x74, 0x68, 0x18, 0x03, 0x20, 0x01, 0x28, 0x03, 0x52, 0x06, 0x6c, 0x65, 0x6e, 0x67,
+	0x74, 0x68, 0x22, 0x5e, 0x0a, 0x09, 0x52, 0x65, 0x61, 0x64, 0x41, 0x74, 0x52, 0x65, 0x71, 0x12,
+	0x19, 0x0a, 0x04, 0x66, 0x69, 0x6c, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x05, 0x2e,
+	0x66, 0x69, 0x6c, 0x65, 0x52, 0x04, 0x66, 0x69, 0x6c, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x69, 0x6e,
+	0x64, 0x65, 0x78, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x05, 0x69, 0x6e, 0x64, 0x65, 0x78,
+	0x12, 0x10, 0x0a, 0x03, 0x6f, 0x66, 0x66, 0x18, 0x03, 0x20, 0x01, 0x28, 0x03, 0x52, 0x03, 0x6f,
+	0x66, 0x66, 0x12, 0x0e, 0x0a, 0x02, 0x6c, 0x6e, 0x18, 0x04, 0x20, 0x01, 0x28, 0x03, 0x52, 0x02,
+	0x6c, 0x6e, 0x22, 0x23, 0x0a, 0x09, 0x52, 0x65, 0x61, 0x64, 0x41, 0x74, 0x52, 0x65, 0x73, 0x12,
+	0x16, 0x0a, 0x06, 0x62, 0x75, 0x66, 0x66, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0c, 0x52,
+	0x06, 0x62, 0x75, 0x66, 0x66, 0x65, 0x72, 0x32, 0x4e, 0x0a, 0x07, 0x54, 0x6f, 0x72, 0x72, 0x65,
+	0x6e, 0x74, 0x12, 0x1f, 0x0a, 0x05, 0x46, 0x69, 0x6c, 0x65, 0x73, 0x12, 0x09, 0x2e, 0x46, 0x69,
+	0x6c, 0x65, 0x73, 0x52, 0x65, 0x71, 0x1a, 0x09, 0x2e, 0x46, 0x69, 0x6c, 0x65, 0x73, 0x52, 0x65,
+	0x73, 0x22, 0x00, 0x12, 0x22, 0x0a, 0x06, 0x52, 0x65, 0x61, 0x64, 0x41, 0x74, 0x12, 0x0a, 0x2e,
+	0x52, 0x65, 0x61, 0x64, 0x41, 0x74, 0x52, 0x65, 0x71, 0x1a, 0x0a, 0x2e, 0x52, 0x65, 0x61, 0x64,
+	0x41, 0x74, 0x52, 0x65, 0x73, 0x22, 0x00, 0x42, 0x20, 0x5a, 0x1e, 0x67, 0x69, 0x74, 0x68, 0x75,
+	0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x63, 0x65, 0x72, 0x6d, 0x69, 0x6e, 0x61, 0x6e, 0x2f, 0x74,
+	0x6f, 0x72, 0x72, 0x65, 0x6e, 0x74, 0x2f, 0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x33,
 }
 
 var (
-	file_pb_torrent_proto_rawDescOnce sync.Once
-	file_pb_torrent_proto_rawDescData = file_pb_torrent_proto_rawDesc
+	file_torrent_proto_rawDescOnce sync.Once
+	file_torrent_proto_rawDescData = file_torrent_proto_rawDesc
 )
 
-func file_pb_torrent_proto_rawDescGZIP() []byte {
-	file_pb_torrent_proto_rawDescOnce.Do(func() {
-		file_pb_torrent_proto_rawDescData = protoimpl.X.CompressGZIP(file_pb_torrent_proto_rawDescData)
+func file_torrent_proto_rawDescGZIP() []byte {
+	file_torrent_proto_rawDescOnce.Do(func() {
+		file_torrent_proto_rawDescData = protoimpl.X.CompressGZIP(file_torrent_proto_rawDescData)
 	})
-	return file_pb_torrent_proto_rawDescData
+	return file_torrent_proto_rawDescData
 }
 
-var file_pb_torrent_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
-var file_pb_torrent_proto_goTypes = []interface{}{
-	(*FetchReq)(nil),  // 0: FetchReq
-	(*FetchRes)(nil),  // 1: FetchRes
-	(*FilesReq)(nil),  // 2: FilesReq
-	(*FilesRes)(nil),  // 3: FilesRes
-	(*File)(nil),      // 4: file
-	(*ReadAtReq)(nil), // 5: ReadAtReq
-	(*ReadAtRes)(nil), // 6: ReadAtRes
+var file_torrent_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_torrent_proto_goTypes = []interface{}{
+	(*FilesReq)(nil),  // 0: FilesReq
+	(*FilesRes)(nil),  // 1: FilesRes
+	(*File)(nil),      // 2: file
+	(*ReadAtReq)(nil), // 3: ReadAtReq
+	(*ReadAtRes)(nil), // 4: ReadAtRes
 }
-var file_pb_torrent_proto_depIdxs = []int32{
-	4, // 0: FilesRes.files:type_name -> file
-	0, // 1: TorrentService.Fetch:input_type -> FetchReq
-	2, // 2: TorrentService.Files:input_type -> FilesReq
-	5, // 3: TorrentService.ReadAt:input_type -> ReadAtReq
-	1, // 4: TorrentService.Fetch:output_type -> FetchRes
-	3, // 5: TorrentService.Files:output_type -> FilesRes
-	6, // 6: TorrentService.ReadAt:output_type -> ReadAtRes
-	4, // [4:7] is the sub-list for method output_type
-	1, // [1:4] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+var file_torrent_proto_depIdxs = []int32{
+	2, // 0: FilesRes.files:type_name -> file
+	2, // 1: ReadAtReq.file:type_name -> file
+	0, // 2: Torrent.Files:input_type -> FilesReq
+	3, // 3: Torrent.ReadAt:input_type -> ReadAtReq
+	1, // 4: Torrent.Files:output_type -> FilesRes
+	4, // 5: Torrent.ReadAt:output_type -> ReadAtRes
+	4, // [4:6] is the sub-list for method output_type
+	2, // [2:4] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
-func init() { file_pb_torrent_proto_init() }
-func file_pb_torrent_proto_init() {
-	if File_pb_torrent_proto != nil {
+func init() { file_torrent_proto_init() }
+func file_torrent_proto_init() {
+	if File_torrent_proto != nil {
 		return
 	}
 	if !protoimpl.UnsafeEnabled {
-		file_pb_torrent_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*FetchReq); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_pb_torrent_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*FetchRes); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_pb_torrent_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+		file_torrent_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*FilesReq); i {
 			case 0:
 				return &v.state
@@ -496,7 +380,7 @@ func file_pb_torrent_proto_init() {
 				return nil
 			}
 		}
-		file_pb_torrent_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+		file_torrent_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*FilesRes); i {
 			case 0:
 				return &v.state
@@ -508,7 +392,7 @@ func file_pb_torrent_proto_init() {
 				return nil
 			}
 		}
-		file_pb_torrent_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+		file_torrent_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*File); i {
 			case 0:
 				return &v.state
@@ -520,7 +404,7 @@ func file_pb_torrent_proto_init() {
 				return nil
 			}
 		}
-		file_pb_torrent_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+		file_torrent_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ReadAtReq); i {
 			case 0:
 				return &v.state
@@ -532,7 +416,7 @@ func file_pb_torrent_proto_init() {
 				return nil
 			}
 		}
-		file_pb_torrent_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+		file_torrent_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ReadAtRes); i {
 			case 0:
 				return &v.state
@@ -549,18 +433,18 @@ func file_pb_torrent_proto_init() {
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: file_pb_torrent_proto_rawDesc,
+			RawDescriptor: file_torrent_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   7,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_pb_torrent_proto_goTypes,
-		DependencyIndexes: file_pb_torrent_proto_depIdxs,
-		MessageInfos:      file_pb_torrent_proto_msgTypes,
+		GoTypes:           file_torrent_proto_goTypes,
+		DependencyIndexes: file_torrent_proto_depIdxs,
+		MessageInfos:      file_torrent_proto_msgTypes,
 	}.Build()
-	File_pb_torrent_proto = out.File
-	file_pb_torrent_proto_rawDesc = nil
-	file_pb_torrent_proto_goTypes = nil
-	file_pb_torrent_proto_depIdxs = nil
+	File_torrent_proto = out.File
+	file_torrent_proto_rawDesc = nil
+	file_torrent_proto_goTypes = nil
+	file_torrent_proto_depIdxs = nil
 }

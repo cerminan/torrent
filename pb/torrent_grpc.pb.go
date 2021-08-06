@@ -14,160 +14,124 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// TorrentServiceClient is the client API for TorrentService service.
+// TorrentClient is the client API for Torrent service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type TorrentServiceClient interface {
-	Fetch(ctx context.Context, in *FetchReq, opts ...grpc.CallOption) (*FetchRes, error)
+type TorrentClient interface {
 	Files(ctx context.Context, in *FilesReq, opts ...grpc.CallOption) (*FilesRes, error)
 	ReadAt(ctx context.Context, in *ReadAtReq, opts ...grpc.CallOption) (*ReadAtRes, error)
 }
 
-type torrentServiceClient struct {
+type torrentClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewTorrentServiceClient(cc grpc.ClientConnInterface) TorrentServiceClient {
-	return &torrentServiceClient{cc}
+func NewTorrentClient(cc grpc.ClientConnInterface) TorrentClient {
+	return &torrentClient{cc}
 }
 
-func (c *torrentServiceClient) Fetch(ctx context.Context, in *FetchReq, opts ...grpc.CallOption) (*FetchRes, error) {
-	out := new(FetchRes)
-	err := c.cc.Invoke(ctx, "/TorrentService/Fetch", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *torrentServiceClient) Files(ctx context.Context, in *FilesReq, opts ...grpc.CallOption) (*FilesRes, error) {
+func (c *torrentClient) Files(ctx context.Context, in *FilesReq, opts ...grpc.CallOption) (*FilesRes, error) {
 	out := new(FilesRes)
-	err := c.cc.Invoke(ctx, "/TorrentService/Files", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/Torrent/Files", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *torrentServiceClient) ReadAt(ctx context.Context, in *ReadAtReq, opts ...grpc.CallOption) (*ReadAtRes, error) {
+func (c *torrentClient) ReadAt(ctx context.Context, in *ReadAtReq, opts ...grpc.CallOption) (*ReadAtRes, error) {
 	out := new(ReadAtRes)
-	err := c.cc.Invoke(ctx, "/TorrentService/ReadAt", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/Torrent/ReadAt", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// TorrentServiceServer is the server API for TorrentService service.
-// All implementations must embed UnimplementedTorrentServiceServer
+// TorrentServer is the server API for Torrent service.
+// All implementations must embed UnimplementedTorrentServer
 // for forward compatibility
-type TorrentServiceServer interface {
-	Fetch(context.Context, *FetchReq) (*FetchRes, error)
+type TorrentServer interface {
 	Files(context.Context, *FilesReq) (*FilesRes, error)
 	ReadAt(context.Context, *ReadAtReq) (*ReadAtRes, error)
-	mustEmbedUnimplementedTorrentServiceServer()
+	mustEmbedUnimplementedTorrentServer()
 }
 
-// UnimplementedTorrentServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedTorrentServiceServer struct {
+// UnimplementedTorrentServer must be embedded to have forward compatible implementations.
+type UnimplementedTorrentServer struct {
 }
 
-func (UnimplementedTorrentServiceServer) Fetch(context.Context, *FetchReq) (*FetchRes, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Fetch not implemented")
-}
-func (UnimplementedTorrentServiceServer) Files(context.Context, *FilesReq) (*FilesRes, error) {
+func (UnimplementedTorrentServer) Files(context.Context, *FilesReq) (*FilesRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Files not implemented")
 }
-func (UnimplementedTorrentServiceServer) ReadAt(context.Context, *ReadAtReq) (*ReadAtRes, error) {
+func (UnimplementedTorrentServer) ReadAt(context.Context, *ReadAtReq) (*ReadAtRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ReadAt not implemented")
 }
-func (UnimplementedTorrentServiceServer) mustEmbedUnimplementedTorrentServiceServer() {}
+func (UnimplementedTorrentServer) mustEmbedUnimplementedTorrentServer() {}
 
-// UnsafeTorrentServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to TorrentServiceServer will
+// UnsafeTorrentServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to TorrentServer will
 // result in compilation errors.
-type UnsafeTorrentServiceServer interface {
-	mustEmbedUnimplementedTorrentServiceServer()
+type UnsafeTorrentServer interface {
+	mustEmbedUnimplementedTorrentServer()
 }
 
-func RegisterTorrentServiceServer(s grpc.ServiceRegistrar, srv TorrentServiceServer) {
-	s.RegisterService(&TorrentService_ServiceDesc, srv)
+func RegisterTorrentServer(s grpc.ServiceRegistrar, srv TorrentServer) {
+	s.RegisterService(&Torrent_ServiceDesc, srv)
 }
 
-func _TorrentService_Fetch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(FetchReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(TorrentServiceServer).Fetch(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/TorrentService/Fetch",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TorrentServiceServer).Fetch(ctx, req.(*FetchReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _TorrentService_Files_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Torrent_Files_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(FilesReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TorrentServiceServer).Files(ctx, in)
+		return srv.(TorrentServer).Files(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/TorrentService/Files",
+		FullMethod: "/Torrent/Files",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TorrentServiceServer).Files(ctx, req.(*FilesReq))
+		return srv.(TorrentServer).Files(ctx, req.(*FilesReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TorrentService_ReadAt_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Torrent_ReadAt_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ReadAtReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TorrentServiceServer).ReadAt(ctx, in)
+		return srv.(TorrentServer).ReadAt(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/TorrentService/ReadAt",
+		FullMethod: "/Torrent/ReadAt",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TorrentServiceServer).ReadAt(ctx, req.(*ReadAtReq))
+		return srv.(TorrentServer).ReadAt(ctx, req.(*ReadAtReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// TorrentService_ServiceDesc is the grpc.ServiceDesc for TorrentService service.
+// Torrent_ServiceDesc is the grpc.ServiceDesc for Torrent service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var TorrentService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "TorrentService",
-	HandlerType: (*TorrentServiceServer)(nil),
+var Torrent_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "Torrent",
+	HandlerType: (*TorrentServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Fetch",
-			Handler:    _TorrentService_Fetch_Handler,
-		},
-		{
 			MethodName: "Files",
-			Handler:    _TorrentService_Files_Handler,
+			Handler:    _Torrent_Files_Handler,
 		},
 		{
 			MethodName: "ReadAt",
-			Handler:    _TorrentService_ReadAt_Handler,
+			Handler:    _Torrent_ReadAt_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "pb/torrent.proto",
+	Metadata: "torrent.proto",
 }
