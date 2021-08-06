@@ -21,7 +21,7 @@ type service struct {
 }
 
 type Service interface {
-  Files(ctx context.Context, url string) ([]File, error)
+  Files(ctx context.Context, magnet string) ([]File, error)
   ReadAt(ctx context.Context, file File, off int64, ln int64) ([]byte, error)
 }
 
@@ -56,11 +56,11 @@ func NewService(logger log.Logger) (Service) {
   }
 }
 
-func (s *service) Files(ctx context.Context, url string) ([]File, error) {
+func (s *service) Files(ctx context.Context, magnet string) ([]File, error) {
   var err error
 
   var torrentInstance *anacrolixTorrent.Torrent
-  torrentInstance, err = s.client.AddMagnet(url)
+  torrentInstance, err = s.client.AddMagnet(magnet)
   if err != nil {
     return nil, err
   }
