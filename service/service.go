@@ -21,15 +21,15 @@ type service struct {
 }
 
 type Service interface {
-  Fetch(ctx context.Context, url string) (Torrent, error)
-  NewReader(ctx context.Context, torrent Torrent, index int) (io.ReadSeekCloser, error)
+  Files(ctx context.Context, url string) ([]File, error)
+  ReadAt(ctx context.Context, file File, off int64, ln int64) ([]byte, error)
 }
 
-type Torrent struct {
-  Hash string
-  Files []File
+type File struct {
+  TorrentHash string
+  Name string
+  Length int64
 }
-
 
 func NewService(logger log.Logger) (Service) {
   var err error
@@ -56,56 +56,76 @@ func NewService(logger log.Logger) (Service) {
   }
 }
 
-type File struct {
-  Name string
-  Length int64
-}
-
-func (s *service) Fetch(ctx context.Context, url string) (Torrent, error) {
+func (s *service) Files(ctx context.Context, url string) ([]File, error) {
   var err error
-  var torrent Torrent
 
   var torrentInstance *anacrolixTorrent.Torrent
-
   torrentInstance, err = s.client.AddMagnet(url)
   if err != nil {
-    return torrent, err
+    return nil, err
   }
   
   <-torrentInstance.GotInfo()
   torrentInstance.DisallowDataUpload()
 
-  torrent = Torrent{
-    Hash: torrentInstance.InfoHash().HexString(),
-  }
+  var hash string
+  hash = torrentInstance.InfoHash().HexString()
 
+  var files []File
   for _, fileInstance := range torrentInstance.Files() {
-    torrent.Files = append(torrent.Files, File{
+    files = append(files, File{
+      TorrentHash: hash,
       Name: fileInstance.DisplayPath(),
       Length: fileInstance.Length(),
     })
   }
 
-  return torrent, nil
+  return files, nil
 }
 
-func (s *service) NewReader(ctx context.Context, torrent Torrent, index int) (io.ReadSeekCloser, error) {
+func (s *service) ReadAt(ctx context.Context, file File, off int64, ln int64) ([]byte, error) {
   var hash anacrolixMetainfo.Hash
-  hash = anacrolixMetainfo.NewHashFromHex(torrent.Hash)
+  hash = anacrolixMetainfo.NewHashFromHex(file.TorrentHash)
+
   var torrentInstance *anacrolixTorrent.Torrent
   var exists bool
   torrentInstance, exists = s.client.Torrent(hash)
   if !exists {
     return nil, errors.New("Torrent not found.")
   }
+
   var fileInstances []*anacrolixTorrent.File
   fileInstances = torrentInstance.Files()
-  if len(fileInstances) < index {
+
+  var fileInstance *anacrolixTorrent.File
+  for _, candidateFileInstance := range fileInstances {
+    if candidateFileInstance.DisplayPath() == file.Name {
+      fileInstance = candidateFileInstance
+      break
+    }
+  }
+  
+  if fileInstance == nil {
     return nil, errors.New("File not found.")
   }
 
-  var fileInstance *anacrolixTorrent.File
-  fileInstance = fileInstances[index]
+  var reader io.ReadSeekCloser
+  reader = fileInstance.NewReader()
+  defer reader.Close()
 
-  return fileInstance.NewReader(), nil
+  var err error
+  _, err = reader.Seek(off, 0)
+  if err != nil {
+    return nil, err
+  }
+
+  var buffer []byte
+  buffer = make([]byte, ln)
+  
+  _, err = reader.Read(buffer)
+  if err != nil {
+    return nil, err
+  }
+
+  return buffer, nil
 }
