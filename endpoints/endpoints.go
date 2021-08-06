@@ -1,31 +1,57 @@
 package endpoints
 
 import (
-	"bytes"
 	"context"
-	"encoding/gob"
-	"io"
 
 	"github.com/cerminan/torrent/service"
 	"github.com/go-kit/kit/endpoint"
 )
 
 type Endpoints struct {
-  Fetch endpoint.Endpoint
-  Files endpoint.Endpoint
-  ReadAt endpoint.Endpoint
+  FilesEndpoint endpoint.Endpoint
+  ReadAtEndpoint endpoint.Endpoint
 }
 
-type FetchReq struct {
-  Url string
+func (e Endpoints) Files(ctx context.Context, magnet string) ([]service.File, error) {
+  var err error
+
+  var rawRes interface{}
+  rawRes, err = e.FilesEndpoint(ctx, FilesReq{Magnet: magnet})
+  if err != nil {
+    return nil, err
+  }
+  
+  var res = rawRes.(FilesRes)
+
+  var files []service.File
+  for _, file := range res.Files {
+    files = append(files, service.File{
+      TorrentHash: file.TorrentHash,
+      Name: file.Name,
+      Length: file.Length,
+    })
+  }
+
+  return files, nil
 }
 
-type FetchRes struct {
-  Data []byte
+func (e Endpoints) ReadAt(ctx context.Context, file service.File, off int64, ln int64) ([]byte, error) {
+  var err error
+  
+  var rawRes interface{}
+  rawRes, err = e.ReadAtEndpoint(ctx, ReadAtReq{File: File(file), Off: off, Ln: ln})
+  if err != nil {
+    return nil, err
+  }
+
+  var res ReadAtRes
+  res = rawRes.(ReadAtRes)
+  
+  return res.Buffer, nil
 }
 
 type FilesReq struct {
-  Data []byte 
+  Magnet string
 }
 
 type FilesRes struct {
@@ -33,13 +59,13 @@ type FilesRes struct {
 }
 
 type File struct {
+  TorrentHash string
   Name string
   Length int64
 }
 
 type ReadAtReq struct {
-  Data []byte
-  Index int32
+  File File
   Off int64
   Ln int64
 }
@@ -50,33 +76,8 @@ type ReadAtRes struct {
 
 func MakeEndpoints(s service.Service) Endpoints {
   return Endpoints{
-    Fetch: makeFetchEndpoint(s),
-    Files: makeFilesEndpoint(s),
-    ReadAt: makeReadAtEndpoint(s),
-  }
-}
-
-func makeFetchEndpoint(s service.Service) endpoint.Endpoint {
-  return func(ctx context.Context, request interface{}) (response interface{}, err error) {
-    var req FetchReq
-    req = request.(FetchReq)
-
-    var buffer bytes.Buffer
-    var encoder *gob.Encoder
-    encoder = gob.NewEncoder(&buffer)
-
-    var torrent service.Torrent
-    torrent, err = s.Fetch(ctx, req.Url)
-    if err != nil {
-      return nil, err
-    }
-
-    err = encoder.Encode(torrent)
-    if err != nil {
-      return nil, err
-    }
-
-    return FetchRes{Data: buffer.Bytes()}, nil
+    FilesEndpoint: makeFilesEndpoint(s),
+    ReadAtEndpoint: makeReadAtEndpoint(s),
   }
 }
 
@@ -85,18 +86,20 @@ func makeFilesEndpoint(s service.Service) endpoint.Endpoint {
     var req FilesReq
     req = request.(FilesReq)
     
-    var torrent service.Torrent
-    torrent, err = bytes2torrent(req.Data)
+    var files []service.File
+    files, err = s.Files(ctx, req.Magnet)
     if err != nil {
       return nil, err
     }
-
-    var files []File
-    for _, file := range torrent.Files {
-      files = append(files, File{Name: file.Name, Length: file.Length})
+    
+    var res FilesRes
+    res = FilesRes{Files: make([]File, 0)}
+    
+    for _, file := range files {
+      res.Files = append(res.Files, File(file))
     }
 
-    return FilesRes{Files: files}, nil
+    return res, nil
   }
 }
 
@@ -105,51 +108,16 @@ func makeReadAtEndpoint(s service.Service) endpoint.Endpoint {
     var req ReadAtReq
     req = request.(ReadAtReq)
  
-    var torrent service.Torrent
-    torrent, err = bytes2torrent(req.Data)
+    var res ReadAtRes
+    res = ReadAtRes{
+      Buffer: make([]byte, req.Ln),
+    }
+
+    res.Buffer, err = s.ReadAt(ctx, service.File(req.File), req.Off, req.Ln)
     if err != nil {
       return nil, err
     }
 
-    var reader io.ReadSeekCloser
-    reader, err = s.NewReader(ctx, torrent, int(req.Index))
-    if err != nil {
-      return nil, err
-    }
-    defer reader.Close()
-
-
-    _, err = reader.Seek(req.Off, 0)
-    if err != nil {
-      return nil, err
-    }
-    
-    var buffer []byte
-    buffer = make([]byte, req.Ln)
-
-    _, err = reader.Read(buffer)
-    if err != nil {
-      return nil, err
-    }
-
-    return ReadAtRes{Buffer: buffer}, nil
+    return res, nil
   }
-}
-
-func bytes2torrent(data []byte) (service.Torrent, error) {
-  var err error
-
-  var buffer *bytes.Buffer
-  buffer = bytes.NewBuffer(data)
-
-  var decoder *gob.Decoder
-  decoder = gob.NewDecoder(buffer)
-  
-  var torrent service.Torrent
-  err = decoder.Decode(&torrent)
-  if err != nil {
-    return service.Torrent{}, err
-  }
-
-  return torrent, nil
 }
