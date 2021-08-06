@@ -13,50 +13,22 @@ type gRPCServer struct {
   fetch gt.Handler
   files gt.Handler
   readat gt.Handler
-  pb.UnimplementedTorrentServiceServer
+  pb.UnimplementedTorrentServer
 }
 
-func NewGRPCServer(endpoints endpoints.Endpoints, logger log.Logger) pb.TorrentServiceServer {
+func NewGRPCServer(endpoints endpoints.Endpoints, logger log.Logger) pb.TorrentServer {
   return &gRPCServer{
-    fetch: gt.NewServer(
-      endpoints.Fetch,
-      decodeFetchRequest,
-      encodeFetchResponse,
-    ),
     files: gt.NewServer(
-      endpoints.Files,
+      endpoints.FilesEndpoint,
       decodeFilesRequest,
       encodeFilesRespones,
     ),
     readat: gt.NewServer(
-      endpoints.ReadAt,
+      endpoints.ReadAtEndpoint,
       decodeReadAtRequest,
       endcodeReadAtResponse,
     ),
   }
-}
-
-func (s *gRPCServer) Fetch(ctx context.Context, req *pb.FetchReq) (*pb.FetchRes, error) {
-  var err error
-  var res interface{}
-  _, res, err = s.fetch.ServeGRPC(ctx, req)
-  if err != nil {
-    return nil, err
-  }
-
-  return res.(*pb.FetchRes), nil
-}
-
-func decodeFetchRequest(_ context.Context, request interface{}) (interface{}, error) {
-  var req *pb.FetchReq
-  req = request.(*pb.FetchReq)
-  return endpoints.FetchReq{Url: req.Url}, nil
-}
-
-func encodeFetchResponse(_ context.Context, response interface{}) (interface{}, error){
-  var res endpoints.FetchRes
-  res = response.(endpoints.FetchRes)
-  return &pb.FetchRes{Data: res.Data}, nil
 }
 
 func (s *gRPCServer) Files(ctx context.Context, req *pb.FilesReq) (*pb.FilesRes, error) {
@@ -73,9 +45,8 @@ func (s *gRPCServer) Files(ctx context.Context, req *pb.FilesReq) (*pb.FilesRes,
 func decodeFilesRequest(_ context.Context, request interface{}) (interface{}, error) {
   var req *pb.FilesReq
   req = request.(*pb.FilesReq)
-  return endpoints.FilesReq{Data: req.Data}, nil
+  return endpoints.FilesReq{Magnet: req.Magnet}, nil
 }
-
 
 func encodeFilesRespones(_ context.Context, response interface{}) (interface{}, error){
   var res endpoints.FilesRes
@@ -83,7 +54,11 @@ func encodeFilesRespones(_ context.Context, response interface{}) (interface{}, 
 
   var files []*pb.File
   for _, file := range res.Files {
-    files = append(files, &pb.File{Name: file.Name, Length: file.Length})
+    files = append(files, &pb.File{
+      TorrentHash: file.TorrentHash,
+      Name: file.Name,
+      Length: file.Length,
+    })
   }
   return &pb.FilesRes{Files: files}, nil
 }
@@ -102,7 +77,15 @@ func (s *gRPCServer) ReadAt(ctx context.Context, req *pb.ReadAtReq) (*pb.ReadAtR
 func decodeReadAtRequest(_ context.Context, request interface{}) (interface{}, error) {
   var req *pb.ReadAtReq
   req = request.(*pb.ReadAtReq)
-  return endpoints.ReadAtReq{Data: req.Data, Index: req.Index, Off: req.Off, Ln: req.Ln}, nil
+
+  var reqFile endpoints.File
+  reqFile = endpoints.File{
+    TorrentHash: req.File.TorrentHash,
+    Name: req.File.Name,
+    Length: req.File.Length,
+  }
+
+  return endpoints.ReadAtReq{File: reqFile, Off: req.Off, Ln: req.Ln}, nil
 }
 
 func endcodeReadAtResponse(_ context.Context, response interface{}) (interface{}, error) {
