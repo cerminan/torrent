@@ -27,7 +27,7 @@ func main() {
   var aservice service.Service
   aservice = service.NewService(logger)
   
-  var grpcServer pb.TorrentServiceServer
+  var grpcServer pb.TorrentServer
   grpcServer = transport.NewGRPCServer(endpoints.MakeEndpoints(aservice), logger)
     
 
@@ -46,7 +46,7 @@ func main() {
 
   go func() {
       baseServer := grpc.NewServer()
-      pb.RegisterTorrentServiceServer(baseServer, grpcServer)
+      pb.RegisterTorrentServer(baseServer, grpcServer)
       level.Info(logger).Log("msg", "Server started successfully")
       baseServer.Serve(grpcListener)
   }()
