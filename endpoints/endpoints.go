@@ -29,7 +29,12 @@ type FilesReq struct {
 }
 
 type FilesRes struct {
-  Files []service.File
+  Files []File
+}
+
+type File struct {
+  Name string
+  Length int64
 }
 
 type ReadAtReq struct {
@@ -86,7 +91,12 @@ func makeFilesEndpoint(s service.Service) endpoint.Endpoint {
       return nil, err
     }
 
-    return FilesRes{Files: torrent.Files}, nil
+    var files []File
+    for _, file := range torrent.Files {
+      files = append(files, File{Name: file.Name, Length: file.Length})
+    }
+
+    return FilesRes{Files: files}, nil
   }
 }
 
