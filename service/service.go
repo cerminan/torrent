@@ -91,7 +91,10 @@ func (s *service) ReadAt(ctx context.Context, file File, off int64, ln int64) ([
   var exists bool
   torrentInstance, exists = s.client.Torrent(hash)
   if !exists {
-    return nil, errors.New("Torrent not found.")
+    torrentInstance, _ = s.client.AddTorrentInfoHash(hash)
+
+    <-torrentInstance.GotInfo()
+    torrentInstance.DisallowDataUpload()
   }
 
   var fileInstances []*anacrolixTorrent.File
