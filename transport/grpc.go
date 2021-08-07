@@ -24,8 +24,8 @@ func NewGRPCClient(conn *grpc.ClientConn) service.Service {
     conn,
     "Torrent",
     "Files",
-    encodeFilesRequest,
-    decodeFilesResponse,
+    encodeGRPCFilesRequest,
+    decodeGRPCFilesResponse,
     pb.FilesRes{},
   ).Endpoint()
 
@@ -34,8 +34,8 @@ func NewGRPCClient(conn *grpc.ClientConn) service.Service {
     conn,
     "Torrent",
     "ReadAt",
-    encodeReadAtRequest,
-    decodeReadAtResponse,
+    encodeGRPCReadAtRequest,
+    decodeGRPCReadAtResponse,
     pb.ReadAtRes{},
   ).Endpoint()
 
@@ -49,13 +49,13 @@ func NewGRPCServer(endpoints endpoints.Endpoints, logger log.Logger) pb.TorrentS
   return &gRPCServer{
     files: gt.NewServer(
       endpoints.FilesEndpoint,
-      decodeFilesRequest,
-      encodeFilesRespones,
+      decodeGRPCFilesRequest,
+      encodeGRPCFilesRespones,
     ),
     readat: gt.NewServer(
       endpoints.ReadAtEndpoint,
-      decodeReadAtRequest,
-      endcodeReadAtResponse,
+      decodeGRPCReadAtRequest,
+      endcodeGRPCReadAtResponse,
     ),
   }
 }
@@ -71,19 +71,19 @@ func (s *gRPCServer) Files(ctx context.Context, req *pb.FilesReq) (*pb.FilesRes,
   return res.(*pb.FilesRes), nil
 }
 
-func encodeFilesRequest(_ context.Context, request interface{}) (interface{}, error){
+func encodeGRPCFilesRequest(_ context.Context, request interface{}) (interface{}, error){
   var req endpoints.FilesReq
   req = request.(endpoints.FilesReq)
   return &pb.FilesReq{Magnet: req.Magnet}, nil
 }
 
-func decodeFilesRequest(_ context.Context, request interface{}) (interface{}, error) {
+func decodeGRPCFilesRequest(_ context.Context, request interface{}) (interface{}, error) {
   var req *pb.FilesReq
   req = request.(*pb.FilesReq)
   return endpoints.FilesReq{Magnet: req.Magnet}, nil
 }
 
-func encodeFilesRespones(_ context.Context, response interface{}) (interface{}, error){
+func encodeGRPCFilesRespones(_ context.Context, response interface{}) (interface{}, error){
   var res endpoints.FilesRes
   res = response.(endpoints.FilesRes)
 
@@ -98,7 +98,7 @@ func encodeFilesRespones(_ context.Context, response interface{}) (interface{}, 
   return &pb.FilesRes{Files: files}, nil
 }
 
-func decodeFilesResponse(_ context.Context, response interface{}) (interface{}, error){
+func decodeGRPCFilesResponse(_ context.Context, response interface{}) (interface{}, error){
   var res *pb.FilesRes
   res = response.(*pb.FilesRes)
 
@@ -125,7 +125,7 @@ func (s *gRPCServer) ReadAt(ctx context.Context, req *pb.ReadAtReq) (*pb.ReadAtR
   return resp.(*pb.ReadAtRes), nil
 }
 
-func encodeReadAtRequest(_ context.Context, request interface{}) (interface{}, error) {
+func encodeGRPCReadAtRequest(_ context.Context, request interface{}) (interface{}, error) {
   var req endpoints.ReadAtReq
   req = request.(endpoints.ReadAtReq)
   
@@ -139,7 +139,7 @@ func encodeReadAtRequest(_ context.Context, request interface{}) (interface{}, e
   return &pb.ReadAtReq{File: reqFile, Off: req.Off, Ln: req.Ln}, nil
 }
 
-func decodeReadAtRequest(_ context.Context, request interface{}) (interface{}, error) {
+func decodeGRPCReadAtRequest(_ context.Context, request interface{}) (interface{}, error) {
   var req *pb.ReadAtReq
   req = request.(*pb.ReadAtReq)
 
@@ -153,13 +153,13 @@ func decodeReadAtRequest(_ context.Context, request interface{}) (interface{}, e
   return endpoints.ReadAtReq{File: reqFile, Off: req.Off, Ln: req.Ln}, nil
 }
 
-func endcodeReadAtResponse(_ context.Context, response interface{}) (interface{}, error) {
+func endcodeGRPCReadAtResponse(_ context.Context, response interface{}) (interface{}, error) {
   var res endpoints.ReadAtRes
   res = response.(endpoints.ReadAtRes)
   return &pb.ReadAtRes{Buffer: res.Buffer}, nil
 }
 
-func decodeReadAtResponse(_ context.Context, response interface{}) (interface{}, error) {
+func decodeGRPCReadAtResponse(_ context.Context, response interface{}) (interface{}, error) {
   var res *pb.ReadAtRes
   res = response.(*pb.ReadAtRes)
   return endpoints.ReadAtRes{Buffer: res.Buffer}, nil
