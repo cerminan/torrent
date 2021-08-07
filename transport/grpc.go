@@ -2,9 +2,8 @@ package transport
 
 import (
 	"context"
-
 	"github.com/cerminan/torrent/endpoints"
-	"github.com/cerminan/torrent/pb"
+	"github.com/cerminan/torrent/transport/pb"
 	"github.com/cerminan/torrent/service"
 	"github.com/go-kit/kit/endpoint"
 	"github.com/go-kit/kit/log"

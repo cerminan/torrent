@@ -8,9 +8,9 @@ import (
 	"syscall"
 
 	"github.com/cerminan/torrent/endpoints"
-	"github.com/cerminan/torrent/pb"
 	"github.com/cerminan/torrent/service"
 	"github.com/cerminan/torrent/transport"
+	"github.com/cerminan/torrent/transport/pb"
 	gklog "github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	"google.golang.org/grpc"
