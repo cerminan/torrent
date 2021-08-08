@@ -50,8 +50,8 @@ func NewClient(conn *grpc.ClientConn) service.Service {
 }
 
 func encodeFilesRequest(_ context.Context, request interface{}) (interface{}, error){
-  var req endpoints.FilesReq
-  req = request.(endpoints.FilesReq)
+  var req endpoints.FilesRequst
+  req = request.(endpoints.FilesRequst)
   return &pb.FilesRequest{Magnet: req.Magnet}, nil
 }
 
@@ -68,12 +68,12 @@ func decodeFilesResponse(_ context.Context, response interface{}) (interface{}, 
     })
   }
 
-  return endpoints.FilesRes{Files: files}, nil
+  return endpoints.FilesResponse{Files: files}, nil
 }
 
 func encodeReadAtRequest(_ context.Context, request interface{}) (interface{}, error) {
-  var req endpoints.ReadAtReq
-  req = request.(endpoints.ReadAtReq)
+  var req endpoints.ReadAtRequest
+  req = request.(endpoints.ReadAtRequest)
   
   var reqFile *pb.File
   reqFile = &pb.File{
@@ -88,7 +88,7 @@ func encodeReadAtRequest(_ context.Context, request interface{}) (interface{}, e
 func decodeReadAtResponse(_ context.Context, response interface{}) (interface{}, error) {
   var res *pb.ReadAtResponse
   res = response.(*pb.ReadAtResponse)
-  return endpoints.ReadAtRes{Buffer: res.Buffer}, nil
+  return endpoints.ReadAtResponse{Buffer: res.Buffer}, nil
 }
 
 func encodeIsMagnetRequest(_ context.Context, request interface{}) (interface{}, error) {

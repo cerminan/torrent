@@ -50,12 +50,12 @@ func (s *server) Files(ctx context.Context, req *pb.FilesRequest) (*pb.FilesResp
 func decodeFilesRequest(_ context.Context, request interface{}) (interface{}, error) {
   var req *pb.FilesRequest
   req = request.(*pb.FilesRequest)
-  return endpoints.FilesReq{Magnet: req.Magnet}, nil
+  return endpoints.FilesRequst{Magnet: req.Magnet}, nil
 }
 
 func encodeFilesRespones(_ context.Context, response interface{}) (interface{}, error){
-  var res endpoints.FilesRes
-  res = response.(endpoints.FilesRes)
+  var res endpoints.FilesResponse
+  res = response.(endpoints.FilesResponse)
 
   var files []*pb.File
   for _, file := range res.Files {
@@ -90,12 +90,12 @@ func decodeReadAtRequest(_ context.Context, request interface{}) (interface{}, e
     Length: req.File.Length,
   }
 
-  return endpoints.ReadAtReq{File: reqFile, Off: req.Off, Ln: req.Ln}, nil
+  return endpoints.ReadAtRequest{File: reqFile, Off: req.Off, Ln: req.Ln}, nil
 }
 
 func encodeReadAtResponse(_ context.Context, response interface{}) (interface{}, error) {
-  var res endpoints.ReadAtRes
-  res = response.(endpoints.ReadAtRes)
+  var res endpoints.ReadAtResponse
+  res = response.(endpoints.ReadAtResponse)
   return &pb.ReadAtResponse{Buffer: res.Buffer}, nil
 }
 

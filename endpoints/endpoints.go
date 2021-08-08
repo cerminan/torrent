@@ -17,12 +17,12 @@ func (e Endpoints) Files(ctx context.Context, magnet string) ([]service.File, er
   var err error
 
   var rawRes interface{}
-  rawRes, err = e.FilesEndpoint(ctx, FilesReq{Magnet: magnet})
+  rawRes, err = e.FilesEndpoint(ctx, FilesRequst{Magnet: magnet})
   if err != nil {
     return nil, err
   }
   
-  var res = rawRes.(FilesRes)
+  var res = rawRes.(FilesResponse)
 
   var files []service.File
   for _, file := range res.Files {
@@ -40,13 +40,13 @@ func (e Endpoints) ReadAt(ctx context.Context, file service.File, off int64, ln 
   var err error
   
   var rawRes interface{}
-  rawRes, err = e.ReadAtEndpoint(ctx, ReadAtReq{File: File(file), Off: off, Ln: ln})
+  rawRes, err = e.ReadAtEndpoint(ctx, ReadAtRequest{File: File(file), Off: off, Ln: ln})
   if err != nil {
     return nil, err
   }
 
-  var res ReadAtRes
-  res = rawRes.(ReadAtRes)
+  var res ReadAtResponse
+  res = rawRes.(ReadAtResponse)
   
   return res.Buffer, nil
 }
@@ -66,113 +66,3 @@ func (e Endpoints) IsMagnet(ctx context.Context, magnet string) (bool, error) {
   return res.Valid, nil
 }
 
-type FilesReq struct {
-  Magnet string
-}
-
-type FilesRes struct {
-  Files []File
-}
-
-type File struct {
-  TorrentHash string
-  Name string
-  Length int64
-}
-
-type ReadAtReq struct {
-  File File
-  Off int64
-  Ln int64
-}
-
-type ReadAtRes struct {
-  Buffer []byte
-}
-
-func MakeEndpoints(s service.Service) Endpoints {
-  var filesEndpoint endpoint.Endpoint
-  {
-    filesEndpoint = makeFilesEndpoint(s)
-  }
-
-  var readAtEndpoint endpoint.Endpoint
-  {
-    readAtEndpoint = makeReadAtEndpoint(s)
-  }
-
-  var isMagnetEnpoint endpoint.Endpoint
-  {
-    isMagnetEnpoint = makeIsMagnetEndpoint(s)
-  }
-  
-  return Endpoints{
-    FilesEndpoint: filesEndpoint,
-    ReadAtEndpoint: readAtEndpoint,
-    IsMagnetEndpoint: isMagnetEnpoint,
-  }
-}
-
-func makeFilesEndpoint(s service.Service) endpoint.Endpoint {
-  return func(ctx context.Context, request interface{}) (response interface{}, err error) {
-    var req FilesReq
-    req = request.(FilesReq)
-    
-    var files []service.File
-    files, err = s.Files(ctx, req.Magnet)
-    if err != nil {
-      return nil, err
-    }
-    
-    var res FilesRes
-    res = FilesRes{Files: make([]File, 0)}
-    
-    for _, file := range files {
-      res.Files = append(res.Files, File(file))
-    }
-
-    return res, nil
-  }
-}
-
-func makeReadAtEndpoint(s service.Service) endpoint.Endpoint {
-  return func(ctx context.Context, request interface{}) (response interface{}, err error) {
-    var req ReadAtReq
-    req = request.(ReadAtReq)
- 
-    var res ReadAtRes
-    res = ReadAtRes{
-      Buffer: make([]byte, req.Ln),
-    }
-
-    res.Buffer, err = s.ReadAt(ctx, service.File(req.File), req.Off, req.Ln)
-    if err != nil {
-      return nil, err
-    }
-
-    return res, nil
-  }
-}
-
-type IsMagnetRequest struct {
-  Magnet string
-}
-
-type IsMagnetResponse struct {
-  Valid bool
-}
-
-func makeIsMagnetEndpoint(s service.Service) endpoint.Endpoint {
-  return func(ctx context.Context, request interface{}) (response interface{}, err error) {
-    var req IsMagnetRequest
-    req = request.(IsMagnetRequest)
-
-    var res IsMagnetResponse
-    res.Valid, err = s.IsMagnet(ctx, req.Magnet)
-    if err != nil {
-      return nil, err
-    }
-
-    return res, nil
-  }
-}
