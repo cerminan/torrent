@@ -47,7 +47,7 @@ func main() {
 
   grpcListener, err := net.Listen("tcp", cfg.Host)
   if err != nil {
-      logger.Log("during", "Listen", "err", err)
+      level.Error(logger).Log("listen", err)
       os.Exit(1)
   }
 
@@ -55,6 +55,7 @@ func main() {
       baseServer := grpc.NewServer()
       pb.RegisterTorrentServer(baseServer, grpcServer)
       level.Info(logger).Log("msg", "Server started successfully")
+      level.Info(logger).Log("listen", "Host " + cfg.Host)
       baseServer.Serve(grpcListener)
   }()
 
