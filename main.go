@@ -10,7 +10,7 @@ import (
 	"github.com/cerminan/torrent/service"
 	"github.com/cerminan/torrent/transport"
 	"github.com/cerminan/torrent/transport/pb"
-	gklog "github.com/go-kit/kit/log"
+	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	"google.golang.org/grpc"
 )
@@ -18,8 +18,12 @@ import (
 func main() {
   var err error
 
-  var logger gklog.Logger
-  logger = newLogger()
+  var logger log.Logger
+  {
+    logger = log.NewLogfmtLogger(os.Stdout)
+    logger = log.With(logger, "ts", log.DefaultTimestampUTC)
+    logger = log.With(logger, "caller", log.DefaultCaller)
+  }
 
   var cfg config.Config
   cfg, err = config.DefaultConfig()
