@@ -8,8 +8,8 @@ import (
 	"github.com/cerminan/torrent/config"
 	"github.com/cerminan/torrent/endpoints"
 	"github.com/cerminan/torrent/service"
-	"github.com/cerminan/torrent/transport"
-	"github.com/cerminan/torrent/transport/pb"
+	transportGRPC "github.com/cerminan/torrent/transport/grpc"
+	"github.com/cerminan/torrent/transport/grpc/pb"
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	"google.golang.org/grpc"
@@ -43,7 +43,7 @@ func main() {
   ep = endpoints.MakeEndpoints(svc)
   
   var grpcServer pb.TorrentServer
-  grpcServer = transport.NewGRPCServer(ep, logger)
+  grpcServer = transportGRPC.NewServer(ep)
     
   var cerr chan error
   cerr = make(chan error, 1)

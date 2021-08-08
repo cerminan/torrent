@@ -18,8 +18,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TorrentClient interface {
-	Files(ctx context.Context, in *FilesReq, opts ...grpc.CallOption) (*FilesRes, error)
-	ReadAt(ctx context.Context, in *ReadAtReq, opts ...grpc.CallOption) (*ReadAtRes, error)
+	Files(ctx context.Context, in *FilesRequest, opts ...grpc.CallOption) (*FilesResponse, error)
+	ReadAt(ctx context.Context, in *ReadAtRequest, opts ...grpc.CallOption) (*ReadAtResponse, error)
 	IsMagnet(ctx context.Context, in *IsMagnetRequest, opts ...grpc.CallOption) (*IsMagnetResponse, error)
 }
 
@@ -31,8 +31,8 @@ func NewTorrentClient(cc grpc.ClientConnInterface) TorrentClient {
 	return &torrentClient{cc}
 }
 
-func (c *torrentClient) Files(ctx context.Context, in *FilesReq, opts ...grpc.CallOption) (*FilesRes, error) {
-	out := new(FilesRes)
+func (c *torrentClient) Files(ctx context.Context, in *FilesRequest, opts ...grpc.CallOption) (*FilesResponse, error) {
+	out := new(FilesResponse)
 	err := c.cc.Invoke(ctx, "/Torrent/Files", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -40,8 +40,8 @@ func (c *torrentClient) Files(ctx context.Context, in *FilesReq, opts ...grpc.Ca
 	return out, nil
 }
 
-func (c *torrentClient) ReadAt(ctx context.Context, in *ReadAtReq, opts ...grpc.CallOption) (*ReadAtRes, error) {
-	out := new(ReadAtRes)
+func (c *torrentClient) ReadAt(ctx context.Context, in *ReadAtRequest, opts ...grpc.CallOption) (*ReadAtResponse, error) {
+	out := new(ReadAtResponse)
 	err := c.cc.Invoke(ctx, "/Torrent/ReadAt", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -62,8 +62,8 @@ func (c *torrentClient) IsMagnet(ctx context.Context, in *IsMagnetRequest, opts 
 // All implementations must embed UnimplementedTorrentServer
 // for forward compatibility
 type TorrentServer interface {
-	Files(context.Context, *FilesReq) (*FilesRes, error)
-	ReadAt(context.Context, *ReadAtReq) (*ReadAtRes, error)
+	Files(context.Context, *FilesRequest) (*FilesResponse, error)
+	ReadAt(context.Context, *ReadAtRequest) (*ReadAtResponse, error)
 	IsMagnet(context.Context, *IsMagnetRequest) (*IsMagnetResponse, error)
 	mustEmbedUnimplementedTorrentServer()
 }
@@ -72,10 +72,10 @@ type TorrentServer interface {
 type UnimplementedTorrentServer struct {
 }
 
-func (UnimplementedTorrentServer) Files(context.Context, *FilesReq) (*FilesRes, error) {
+func (UnimplementedTorrentServer) Files(context.Context, *FilesRequest) (*FilesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Files not implemented")
 }
-func (UnimplementedTorrentServer) ReadAt(context.Context, *ReadAtReq) (*ReadAtRes, error) {
+func (UnimplementedTorrentServer) ReadAt(context.Context, *ReadAtRequest) (*ReadAtResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ReadAt not implemented")
 }
 func (UnimplementedTorrentServer) IsMagnet(context.Context, *IsMagnetRequest) (*IsMagnetResponse, error) {
@@ -95,7 +95,7 @@ func RegisterTorrentServer(s grpc.ServiceRegistrar, srv TorrentServer) {
 }
 
 func _Torrent_Files_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(FilesReq)
+	in := new(FilesRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -107,13 +107,13 @@ func _Torrent_Files_Handler(srv interface{}, ctx context.Context, dec func(inter
 		FullMethod: "/Torrent/Files",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TorrentServer).Files(ctx, req.(*FilesReq))
+		return srv.(TorrentServer).Files(ctx, req.(*FilesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Torrent_ReadAt_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ReadAtReq)
+	in := new(ReadAtRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -125,7 +125,7 @@ func _Torrent_ReadAt_Handler(srv interface{}, ctx context.Context, dec func(inte
 		FullMethod: "/Torrent/ReadAt",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TorrentServer).ReadAt(ctx, req.(*ReadAtReq))
+		return srv.(TorrentServer).ReadAt(ctx, req.(*ReadAtRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

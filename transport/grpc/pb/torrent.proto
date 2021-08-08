@@ -3,33 +3,33 @@ syntax = "proto3";
 option go_package = "github.com/cerminan/torrent/pb";
 
 service Torrent {
-  rpc Files(FilesReq) returns (FilesRes) {}
-  rpc ReadAt(ReadAtReq) returns (ReadAtRes) {}
+  rpc Files(FilesRequest) returns (FilesResponse) {}
+  rpc ReadAt(ReadAtRequest) returns (ReadAtResponse) {}
   rpc IsMagnet(IsMagnetRequest) returns (IsMagnetResponse) {}
 }
 
-message FilesReq {
+message FilesRequest {
   string magnet = 1;
 }
 
-message FilesRes {
-  repeated file files = 1;
+message FilesResponse {
+  repeated File files = 1;
 }
 
-message file {
+message File {
   string torrentHash = 1;
   string name = 2;
   int64 length = 3;
 }
 
-message ReadAtReq {
-  file file = 1;
+message ReadAtRequest {
+  File file = 1;
   int32 index = 2;
   int64 off = 3;
   int64 ln = 4;
 }
 
-message ReadAtRes {
+message ReadAtResponse {
   bytes buffer = 1;
 }
 

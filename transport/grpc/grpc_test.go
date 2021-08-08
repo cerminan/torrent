@@ -1,4 +1,4 @@
-package transport
+package grpc
 
 import (
 	"context"
@@ -54,7 +54,7 @@ func TestFiles(t *testing.T) {
   defer conn.Close()
 
   var svc service.Service
-  svc = NewGRPCClient(conn)
+  svc = NewClient(conn)
 
   var files []service.File
   files, err = svc.Files(context.Background(), magnet)
@@ -96,7 +96,7 @@ func TestReadAt(t *testing.T) {
   defer conn.Close()
 
   var svc service.Service
-  svc = NewGRPCClient(conn)
+  svc = NewClient(conn)
 
   var buffer []byte
   buffer, err = svc.ReadAt(context.Background(), file, off, ln)
