@@ -59,6 +59,13 @@ func NewService(logger log.Logger) (Service) {
 func (s *service) Files(ctx context.Context, magnet string) ([]File, error) {
   var err error
 
+  var valid bool
+  valid = isMagnet(magnet)
+  if !valid {
+    level.Debug(s.logger).Log("magnet", magnet)
+    return nil, errors.New("given magnet is not a magnet uri.")
+  }
+
   var torrentInstance *anacrolixTorrent.Torrent
   torrentInstance, err = s.client.AddMagnet(magnet)
   if err != nil {
