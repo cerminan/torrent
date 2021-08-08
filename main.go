@@ -19,11 +19,9 @@ import (
 
 func main() {
   var err error
-  
+
   var logger gklog.Logger
-  logger = gklog.NewLogfmtLogger(os.Stdout)
-  logger = gklog.With(logger, "ts", gklog.DefaultTimestampUTC)
-  logger = gklog.With(logger, "caller", gklog.DefaultCaller)
+  logger = newLogger()
 
   var cfg config.Config
   cfg, err = config.DefaultConfig()
@@ -36,13 +34,15 @@ func main() {
     level.Error(logger).Log("config", err)
   }
   
-  var aservice service.Service
-  aservice = service.NewService(logger)
+  var svc service.Service
+  svc = service.NewService(logger)
+
+  var ep endpoints.Endpoints
+  ep = endpoints.MakeEndpoints(svc)
   
   var grpcServer pb.TorrentServer
-  grpcServer = transport.NewGRPCServer(endpoints.MakeEndpoints(aservice), logger)
+  grpcServer = transport.NewGRPCServer(ep, logger)
     
-
   errs := make(chan error)
   go func() {
       c := make(chan os.Signal)
