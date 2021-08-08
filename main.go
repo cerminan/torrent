@@ -1,12 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"net"
 	"os"
-	"os/signal"
-	"syscall"
 
+	"github.com/cerminan/libs/exit"
 	"github.com/cerminan/torrent/config"
 	"github.com/cerminan/torrent/endpoints"
 	"github.com/cerminan/torrent/service"
@@ -43,12 +41,9 @@ func main() {
   var grpcServer pb.TorrentServer
   grpcServer = transport.NewGRPCServer(ep, logger)
     
-  errs := make(chan error)
-  go func() {
-      c := make(chan os.Signal)
-      signal.Notify(c, syscall.SIGINT, syscall.SIGTERM, syscall.SIGALRM)
-      errs <- fmt.Errorf("%s", <-c)
-  }()
+  var cerr chan error
+  cerr = make(chan error, 1)
+  cerr = exit.ExitSignal()
 
   grpcListener, err := net.Listen("tcp", cfg.Host)
   if err != nil {
@@ -63,6 +58,6 @@ func main() {
       baseServer.Serve(grpcListener)
   }()
 
-  level.Error(logger).Log("exit", <-errs)
+  level.Error(logger).Log("exit", <-cerr)
 } 
 
