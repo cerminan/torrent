@@ -2,6 +2,7 @@ package transport
 
 import (
 	"context"
+
 	"github.com/cerminan/torrent/endpoints"
 	"github.com/cerminan/torrent/transport/pb"
 	"github.com/cerminan/torrent/service"
@@ -15,6 +16,7 @@ type gRPCServer struct {
   fetch gt.Handler
   files gt.Handler
   readat gt.Handler
+  isMagnet gt.Handler
   pb.UnimplementedTorrentServer
 }
 
@@ -39,9 +41,20 @@ func NewGRPCClient(conn *grpc.ClientConn) service.Service {
     pb.ReadAtRes{},
   ).Endpoint()
 
+  var isMagnet endpoint.Endpoint
+  isMagnet = gt.NewClient(
+    conn,
+    "Torrent",
+    "IsMagnet",
+    encodeGRPCIsMagnetRequest,
+    decodeGRPCIsMagnetResponse,
+    pb.IsMagnetResponse{},
+  ).Endpoint()
+
   return endpoints.Endpoints{
     FilesEndpoint: files,
     ReadAtEndpoint: readAt, 
+    IsMagnetEndpoint: isMagnet,
   }
 }
 
@@ -56,6 +69,11 @@ func NewGRPCServer(endpoints endpoints.Endpoints, logger log.Logger) pb.TorrentS
       endpoints.ReadAtEndpoint,
       decodeGRPCReadAtRequest,
       endcodeGRPCReadAtResponse,
+    ),
+    isMagnet: gt.NewServer(
+      endpoints.IsMagnetEndpoint,
+      decodeGRPCIsMagnetRequest,
+      encodeGRPCIsMagnetResponse,
     ),
   }
 }
@@ -163,4 +181,39 @@ func decodeGRPCReadAtResponse(_ context.Context, response interface{}) (interfac
   var res *pb.ReadAtRes
   res = response.(*pb.ReadAtRes)
   return endpoints.ReadAtRes{Buffer: res.Buffer}, nil
+}
+
+func (s *gRPCServer) IsMagnet(ctx context.Context, req *pb.IsMagnetRequest) (*pb.IsMagnetResponse, error) {
+  var err error
+  var res interface{}
+  _, res, err = s.isMagnet.ServeGRPC(ctx, req)
+  if err != nil {
+    return nil, err
+  }
+
+  return res.(*pb.IsMagnetResponse), nil
+}
+
+func encodeGRPCIsMagnetRequest(_ context.Context, request interface{}) (interface{}, error) {
+  var req endpoints.IsMagnetRequest
+  req = request.(endpoints.IsMagnetRequest)
+  return &pb.IsMagnetRequest{Magnet: req.Magnet}, nil
+}
+
+func decodeGRPCIsMagnetRequest(_ context.Context, request interface{}) (interface{}, error) {
+  var req *pb.IsMagnetRequest
+  req = request.(*pb.IsMagnetRequest)
+  return endpoints.IsMagnetRequest{Magnet: req.Magnet}, nil
+}
+
+func encodeGRPCIsMagnetResponse(_ context.Context, response interface{}) (interface{}, error) {
+  var res endpoints.IsMagnetResponse
+  res = response.(endpoints.IsMagnetResponse)
+  return &pb.IsMagnetResponse{Valid: res.Valid}, nil
+}
+
+func decodeGRPCIsMagnetResponse(_ context.Context, response interface{}) (interface{}, error) {
+  var res *pb.IsMagnetResponse
+  res = response.(*pb.IsMagnetResponse)
+  return endpoints.IsMagnetResponse{Valid: res.Valid}, nil
 }

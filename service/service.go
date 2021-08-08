@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"io"
+  "regexp"
 	"time"
 
 	anacrolixLog "github.com/anacrolix/log"
@@ -23,6 +24,7 @@ type service struct {
 type Service interface {
   Files(ctx context.Context, magnet string) ([]File, error)
   ReadAt(ctx context.Context, file File, off int64, ln int64) ([]byte, error)
+  IsMagnet(ctx context.Context, magnet string) (bool, error)
 }
 
 type File struct {
@@ -60,7 +62,10 @@ func (s *service) Files(ctx context.Context, magnet string) ([]File, error) {
   var err error
 
   var valid bool
-  valid = isMagnet(magnet)
+  valid, err = s.IsMagnet(ctx, magnet)
+  if err != nil {
+    return nil, err
+  }
   if !valid {
     return nil, errors.New("given magnet is not a magnet uri")
   }
@@ -137,4 +142,14 @@ func (s *service) ReadAt(ctx context.Context, file File, off int64, ln int64) ([
   }
 
   return buffer, nil
+}
+
+func (s service) IsMagnet(ctx context.Context, magnet string) (bool, error) {
+  var re *regexp.Regexp
+  re = regexp.MustCompile("(?i)^magnet:\\?xt=urn:[a-z0-9]+:[a-z0-9]{32,40}(?:&dn=[^&]+)?(?:&(?:tr|xs)=[^&]+)*$")
+  
+  var match bool
+  match = re.Match([]byte(magnet)) 
+
+  return match, nil
 }

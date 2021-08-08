@@ -10,6 +10,7 @@ import (
 type Endpoints struct {
   FilesEndpoint endpoint.Endpoint
   ReadAtEndpoint endpoint.Endpoint
+  IsMagnetEndpoint endpoint.Endpoint
 }
 
 func (e Endpoints) Files(ctx context.Context, magnet string) ([]service.File, error) {
@@ -50,6 +51,21 @@ func (e Endpoints) ReadAt(ctx context.Context, file service.File, off int64, ln 
   return res.Buffer, nil
 }
 
+func (e Endpoints) IsMagnet(ctx context.Context, magnet string) (bool, error) {
+  var err error
+  
+  var rawRes interface{}
+  rawRes, err = e.IsMagnetEndpoint(ctx, IsMagnetRequest{Magnet: magnet})
+  if err != nil {
+    return false, err
+  }
+
+  var res IsMagnetResponse
+  res = rawRes.(IsMagnetResponse)
+
+  return res.Valid, nil
+}
+
 type FilesReq struct {
   Magnet string
 }
@@ -75,9 +91,25 @@ type ReadAtRes struct {
 }
 
 func MakeEndpoints(s service.Service) Endpoints {
+  var filesEndpoint endpoint.Endpoint
+  {
+    filesEndpoint = makeFilesEndpoint(s)
+  }
+
+  var readAtEndpoint endpoint.Endpoint
+  {
+    readAtEndpoint = makeReadAtEndpoint(s)
+  }
+
+  var isMagnetEnpoint endpoint.Endpoint
+  {
+    isMagnetEnpoint = makeIsMagnetEndpoint(s)
+  }
+  
   return Endpoints{
-    FilesEndpoint: makeFilesEndpoint(s),
-    ReadAtEndpoint: makeReadAtEndpoint(s),
+    FilesEndpoint: filesEndpoint,
+    ReadAtEndpoint: readAtEndpoint,
+    IsMagnetEndpoint: isMagnetEnpoint,
   }
 }
 
@@ -114,6 +146,29 @@ func makeReadAtEndpoint(s service.Service) endpoint.Endpoint {
     }
 
     res.Buffer, err = s.ReadAt(ctx, service.File(req.File), req.Off, req.Ln)
+    if err != nil {
+      return nil, err
+    }
+
+    return res, nil
+  }
+}
+
+type IsMagnetRequest struct {
+  Magnet string
+}
+
+type IsMagnetResponse struct {
+  Valid bool
+}
+
+func makeIsMagnetEndpoint(s service.Service) endpoint.Endpoint {
+  return func(ctx context.Context, request interface{}) (response interface{}, err error) {
+    var req IsMagnetRequest
+    req = request.(IsMagnetRequest)
+
+    var res IsMagnetResponse
+    res.Valid, err = s.IsMagnet(ctx, req.Magnet)
     if err != nil {
       return nil, err
     }

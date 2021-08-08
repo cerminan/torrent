@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion7
 type TorrentClient interface {
 	Files(ctx context.Context, in *FilesReq, opts ...grpc.CallOption) (*FilesRes, error)
 	ReadAt(ctx context.Context, in *ReadAtReq, opts ...grpc.CallOption) (*ReadAtRes, error)
+	IsMagnet(ctx context.Context, in *IsMagnetRequest, opts ...grpc.CallOption) (*IsMagnetResponse, error)
 }
 
 type torrentClient struct {
@@ -48,12 +49,22 @@ func (c *torrentClient) ReadAt(ctx context.Context, in *ReadAtReq, opts ...grpc.
 	return out, nil
 }
 
+func (c *torrentClient) IsMagnet(ctx context.Context, in *IsMagnetRequest, opts ...grpc.CallOption) (*IsMagnetResponse, error) {
+	out := new(IsMagnetResponse)
+	err := c.cc.Invoke(ctx, "/Torrent/IsMagnet", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TorrentServer is the server API for Torrent service.
 // All implementations must embed UnimplementedTorrentServer
 // for forward compatibility
 type TorrentServer interface {
 	Files(context.Context, *FilesReq) (*FilesRes, error)
 	ReadAt(context.Context, *ReadAtReq) (*ReadAtRes, error)
+	IsMagnet(context.Context, *IsMagnetRequest) (*IsMagnetResponse, error)
 	mustEmbedUnimplementedTorrentServer()
 }
 
@@ -66,6 +77,9 @@ func (UnimplementedTorrentServer) Files(context.Context, *FilesReq) (*FilesRes, 
 }
 func (UnimplementedTorrentServer) ReadAt(context.Context, *ReadAtReq) (*ReadAtRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ReadAt not implemented")
+}
+func (UnimplementedTorrentServer) IsMagnet(context.Context, *IsMagnetRequest) (*IsMagnetResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IsMagnet not implemented")
 }
 func (UnimplementedTorrentServer) mustEmbedUnimplementedTorrentServer() {}
 
@@ -116,6 +130,24 @@ func _Torrent_ReadAt_Handler(srv interface{}, ctx context.Context, dec func(inte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Torrent_IsMagnet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IsMagnetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TorrentServer).IsMagnet(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Torrent/IsMagnet",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TorrentServer).IsMagnet(ctx, req.(*IsMagnetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Torrent_ServiceDesc is the grpc.ServiceDesc for Torrent service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -130,6 +162,10 @@ var Torrent_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ReadAt",
 			Handler:    _Torrent_ReadAt_Handler,
+		},
+		{
+			MethodName: "IsMagnet",
+			Handler:    _Torrent_IsMagnet_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

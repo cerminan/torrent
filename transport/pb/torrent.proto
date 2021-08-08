@@ -5,6 +5,7 @@ option go_package = "github.com/cerminan/torrent/pb";
 service Torrent {
   rpc Files(FilesReq) returns (FilesRes) {}
   rpc ReadAt(ReadAtReq) returns (ReadAtRes) {}
+  rpc IsMagnet(IsMagnetRequest) returns (IsMagnetResponse) {}
 }
 
 message FilesReq {
@@ -30,4 +31,12 @@ message ReadAtReq {
 
 message ReadAtRes {
   bytes buffer = 1;
+}
+
+message IsMagnetRequest{
+  string magnet = 1;
+}
+
+message IsMagnetResponse {
+  bool valid = 1;
 }
