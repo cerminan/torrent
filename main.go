@@ -59,7 +59,7 @@ func main() {
       baseServer := grpc.NewServer()
       pb.RegisterTorrentServer(baseServer, grpcServer)
       level.Info(logger).Log("msg", "Server started successfully")
-      level.Info(logger).Log("listen", "Host " + cfg.Host)
+      level.Info(logger).Log("listen", cfg.Host)
       baseServer.Serve(grpcListener)
   }()
 
