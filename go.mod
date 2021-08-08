@@ -8,6 +8,6 @@ require (
 	github.com/anacrolix/torrent v1.28.1-0.20210702044313-e1cac00bd5da
 	github.com/cerminan/libs v0.0.0-20210808045838-28e51c827dfa
 	github.com/go-kit/kit v0.10.0
-	google.golang.org/grpc v1.39.0
+	google.golang.org/grpc v1.39.1
 	google.golang.org/protobuf v1.25.0
 )
