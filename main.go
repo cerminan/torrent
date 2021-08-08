@@ -7,6 +7,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/cerminan/torrent/config"
 	"github.com/cerminan/torrent/endpoints"
 	"github.com/cerminan/torrent/service"
 	"github.com/cerminan/torrent/transport"
@@ -24,6 +25,17 @@ func main() {
   logger = gklog.With(logger, "ts", gklog.DefaultTimestampUTC)
   logger = gklog.With(logger, "caller", gklog.DefaultCaller)
 
+  var cfg config.Config
+  cfg, err = config.DefaultConfig()
+  if err != nil {
+    level.Error(logger).Log("config", err)
+  }
+
+  err = cfg.LoadEnvar()
+  if err != nil {
+    level.Error(logger).Log("config", err)
+  }
+  
   var aservice service.Service
   aservice = service.NewService(logger)
   
@@ -38,7 +50,7 @@ func main() {
       errs <- fmt.Errorf("%s", <-c)
   }()
 
-  grpcListener, err := net.Listen("tcp", ":50051")
+  grpcListener, err := net.Listen("tcp", cfg.Host)
   if err != nil {
       logger.Log("during", "Listen", "err", err)
       os.Exit(1)
