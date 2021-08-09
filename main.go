@@ -49,17 +49,22 @@ func main() {
     var grpcServer pb.TorrentServer
     grpcServer = transportGRPC.NewServer(ep)
 
-    grpcListener, err := net.Listen("tcp", cfg.Host)
+    var listener net.Listener
+    listener, err = net.Listen("tcp", cfg.Host)
     if err != nil {
         level.Error(logger).Log("listen", err)
         os.Exit(1)
     }
 
-    baseServer := grpc.NewServer()
+    var baseServer *grpc.Server
+    baseServer = grpc.NewServer()
     pb.RegisterTorrentServer(baseServer, grpcServer)
     level.Info(logger).Log("msg", "Server started successfully")
     level.Info(logger).Log("listen", cfg.Host)
-    baseServer.Serve(grpcListener)
+    err = baseServer.Serve(listener)
+    if err != nil {
+      level.Error(logger).Log("grpc", err)
+    }
   }()
 
   level.Error(logger).Log("exit", <-cerr)
