@@ -16,7 +16,8 @@ import (
 )
 
 func main() {
-  var err error
+  var cerr chan error
+  cerr = exit.ExitSignal()
 
   var logger log.Logger
   {
@@ -24,43 +25,41 @@ func main() {
     logger = log.With(logger, "ts", log.DefaultTimestampUTC)
     logger = log.With(logger, "caller", log.DefaultCaller)
   }
-
-  var cfg config.Config
-  cfg, err = config.DefaultConfig()
-  if err != nil {
-    level.Error(logger).Log("config", err)
-  }
-
-  err = cfg.LoadEnvar()
-  if err != nil {
-    level.Error(logger).Log("config", err)
-  }
   
-  var svc service.Service
-  svc = service.NewService(logger)
+  go func(){
+    var err error
 
-  var ep endpoints.Endpoints
-  ep = endpoints.MakeEndpoints(svc)
-  
-  var grpcServer pb.TorrentServer
-  grpcServer = transportGRPC.NewServer(ep)
+    var cfg config.Config
+    cfg, err = config.DefaultConfig()
+    if err != nil {
+      level.Error(logger).Log("config", err)
+    }
+
+    err = cfg.LoadEnvar()
+    if err != nil {
+      level.Error(logger).Log("config", err)
+    }
     
-  var cerr chan error
-  cerr = make(chan error, 1)
-  cerr = exit.ExitSignal()
+    var svc service.Service
+    svc = service.NewService(logger)
 
-  grpcListener, err := net.Listen("tcp", cfg.Host)
-  if err != nil {
-      level.Error(logger).Log("listen", err)
-      os.Exit(1)
-  }
+    var ep endpoints.Endpoints
+    ep = endpoints.MakeEndpoints(svc)
+    
+    var grpcServer pb.TorrentServer
+    grpcServer = transportGRPC.NewServer(ep)
 
-  go func() {
-      baseServer := grpc.NewServer()
-      pb.RegisterTorrentServer(baseServer, grpcServer)
-      level.Info(logger).Log("msg", "Server started successfully")
-      level.Info(logger).Log("listen", cfg.Host)
-      baseServer.Serve(grpcListener)
+    grpcListener, err := net.Listen("tcp", cfg.Host)
+    if err != nil {
+        level.Error(logger).Log("listen", err)
+        os.Exit(1)
+    }
+
+    baseServer := grpc.NewServer()
+    pb.RegisterTorrentServer(baseServer, grpcServer)
+    level.Info(logger).Log("msg", "Server started successfully")
+    level.Info(logger).Log("listen", cfg.Host)
+    baseServer.Serve(grpcListener)
   }()
 
   level.Error(logger).Log("exit", <-cerr)
